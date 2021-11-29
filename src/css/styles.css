@@ -71,6 +71,7 @@ input {
 .info {
   display: flex;
   align-items: center;
+  text-align: center;
   justify-content: space-between;
   margin-left: -15px;
   margin-bottom: -15px;
