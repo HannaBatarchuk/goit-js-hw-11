@@ -52,7 +52,6 @@ async function onFormSubmit(event) {
 
 async function onBtnLoadMoreClick() {
   page += 1;
-  console.log(page);
   try {
     const images = await fetchGalery(value, page);
     createMarkup(images);
@@ -62,7 +61,7 @@ async function onBtnLoadMoreClick() {
   const { height: cardHeight } = document
     .querySelector('.gallery')
     .firstElementChild.getBoundingClientRect();
-  console.log({ height: cardHeight });
+  
   window.scrollBy({
     top: cardHeight * 2,
     behavior: 'smooth',
@@ -70,7 +69,7 @@ async function onBtnLoadMoreClick() {
 }
 
 function createMarkup({ hits, totalHits }) {
-  const pageLimit = Math.ceil(totalHits / hits.length);
+  const pageLimit = Math.ceil(totalHits / PER_PAGE);
   const imagesMarkup = hits
     .map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
       return `<a class="gallery-item" href="${largeImageURL}">
@@ -98,18 +97,20 @@ function createMarkup({ hits, totalHits }) {
     .join('');
   galleryItemsList.insertAdjacentHTML('beforeend', imagesMarkup);
 
-  if (page === pageLimit) {
+  lightbox.refresh();
+
+  if (pageLimit === page) {
     setTimeout(() => {
       Notify.info("We're sorry, but you've reached the end of search results.");
       btnLoadMore.classList.add('is-hiden');
     }, 0);
   }
-  let lightbox = new SimpleLightbox('.gallery a', {
+}
+
+let lightbox = new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
     captionDelay: 300,
   });
-  lightbox.refresh();
-}
 
 galleryItemsList.addEventListener('click', e => {
   e.preventDefault();
